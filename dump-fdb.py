@@ -34,6 +34,13 @@ infobasic = soup.find(id="zakladni_info")
 info["title"]= infobasic.h1.string
 info["cast"] = []
 
+# check if we are on the right page, if not print correct URL to stderr and quit
+for x in soup.findAll("a"):
+  if unicode(x.get("href")).find("/obsazeni/") != -1:
+    url = "http://www.fdb.cz/"
+    sys.stderr.write(url + x.get("href") + "\n")
+    sys.exit(0)
+
 for x in soup.findAll("div", { "class" : "row" }):
   if "Rok:" in str(x):
     info["released_year"] = x.find("div", {"class" : "right_text"}).string

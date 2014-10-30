@@ -41,10 +41,10 @@ for x in soup.findAll("div", { "class" : "row" }):
 
 role = None
 for x in soup.find("div", { "class" : "obsazeni" }).contents:
-  if (x.name == "div") and (x.has_attr("class")) and ("title" in x["class"]):
+  if (hasattr(x, "name")) and (x.name == "div") and (x.has_attr("class")) and ("title" in x["class"]):
     role = x.string[:-1]
 
-  if (x.name == "table"):
+  if (hasattr(x, "name")) and (x.name == "table"):
     for tr in x.findAll("tr"):
       person = None
       character = None

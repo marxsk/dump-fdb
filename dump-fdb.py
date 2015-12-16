@@ -9,7 +9,12 @@ import sys
 def print_xml(finfo):
   print "<movie>"
   print "\t<title>%s</title>" % (finfo["title"])
-  print "\t<released>%s</released>" % (finfo["released_year"])
+  if "original_title" in finfo:
+    print "\t<title_original>%s</title_original>" % (finfo["original_title"])
+  if "other_titles" in finfo:
+    print "\t<other_titles>%s</other_titles>" % (finfo["other_titles"])
+  if "released" in finfo:
+    print "\t<released>%s</released>" % (finfo["released_year"])
   print "\t<cast>"
   for x in finfo["cast"]:
     print "\t\t<cast-entry>"
@@ -34,6 +39,14 @@ infobasic = soup.find(id="zakladni_info")
 info["title"]= infobasic.h1.string
 info["cast"] = []
 
+x = soup.find("h2", { "class"  : "title_next"})
+if x:
+	info["original_title"] = x.string
+
+for x in soup.findAll("div", { "class" : "left_text" }):
+	if "Další název:" in str(x):
+		# @todo: this should be split but there are several separators in DB
+		info["other_titles"] = x.next_sibling.string.strip()
 
 for x in soup.findAll("div", { "class" : "row" }):
   if "Rok:" in str(x):

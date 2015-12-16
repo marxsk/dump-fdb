@@ -28,7 +28,7 @@ fh = sys.stdin
 if len(sys.argv) > 1:
   fh = open(sys.argv[1],"r")
 source = fh.read()
-soup = BeautifulSoup(source)
+soup = BeautifulSoup(source, "html.parser")
 
 infobasic = soup.find(id="zakladni_info")
 info["title"]= infobasic.h1.string

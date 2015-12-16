@@ -5,6 +5,7 @@
 
 from bs4 import BeautifulSoup
 import sys
+import logging
 
 def print_xml(finfo):
   print "<movie>"
@@ -27,17 +28,20 @@ def print_xml(finfo):
   print "</movie>"
   return finfo
 
+logging.getLogger().setLevel(logging.INFO)
 info = {}
 
 fh = sys.stdin
 if len(sys.argv) > 1:
   fh = open(sys.argv[1],"r")
+  logging.info(sys.argv[1])
 source = fh.read()
 soup = BeautifulSoup(source, "html.parser")
 
 infobasic = soup.find(id="zakladni_info")
 info["title"]= infobasic.h1.string
 info["cast"] = []
+logging.debug("Title: %s" % (info["title"]))
 
 x = soup.find("h2", { "class"  : "title_next"})
 if x:

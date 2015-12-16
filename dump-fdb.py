@@ -28,6 +28,28 @@ def print_xml(finfo):
   print "</movie>"
   return finfo
 
+def print_xml_serie(finfo):
+  print "<serie>"
+  print "\t<title>%s</title>" % (finfo["title"])
+  print "\t<episode_title>%s</episode_title>" % (finfo["episode_title"])
+  if "original_title" in finfo:
+    print "\t<episode_title_original>%s</episode_title_original>" % (finfo["original_title"])
+  if "episode_info" in finfo:
+    print "\t<episode_info>%s</episode_info>" % (finfo["episode_info"])
+  if "released_year" in finfo:
+    print "\t<released>%s</released>" % (finfo["released_year"])
+  print "\t<cast>"
+  for x in finfo["cast"]:
+    print "\t\t<cast-entry>"
+    print "\t\t\t<person>%s</person>" % (" ".join(x["name"].split()))
+    print "\t\t\t<role>%s</role>" % (x["role"])
+    if x.has_key("character"):
+      print "\t\t\t<character>%s</character>" % (" ".join(x["character"].split()))
+    print "\t\t</cast-entry>"
+  print "\t</cast>"
+  print "</serie>"
+  return finfo
+
 logging.getLogger().setLevel(logging.INFO)
 info = {}
 
@@ -56,6 +78,17 @@ for x in soup.findAll("div", { "class" : "row" }):
   if "Rok:" in str(x):
     info["released_year"] = x.find("div", {"class" : "right_text"}).string
 
+x = soup.find("h2", { "class" : "dil" })
+if x:
+  try:
+    info["episode_title"] = x.contents[0].string.strip()
+  except:
+    pass
+
+  try:
+    info["episode_info"] = x.contents[1].string.strip()
+  except:
+    pass
 
 role = None
 for x in soup.find("div", { "class" : "obsazeni" }).contents:
@@ -82,4 +115,7 @@ for x in soup.find("div", { "class" : "obsazeni" }).contents:
 
         info["cast"].append(pinfo)
 
-print_xml(info)
+if "episode_title" in info:
+  print_xml_serie(info)
+else:
+  print_xml(info)
